@@ -4,6 +4,8 @@ DOMAIN = "grizzle"
 MANUFACTURER = "United Chargers"
 
 CONF_HOST = "host"
+CONF_COST_PER_KWH = "cost_per_kwh"
+DEFAULT_COST_PER_KWH = 0.10
 
 # API endpoints
 ENDPOINT_INIT = "/init"

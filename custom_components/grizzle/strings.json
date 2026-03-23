@@ -17,6 +17,16 @@
       "already_configured": "This charger is already configured."
     }
   },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Grizzl-E Settings",
+        "data": {
+          "cost_per_kwh": "Cost per kWh ($)"
+        }
+      }
+    }
+  },
   "entity": {
     "sensor": {
       "voltage": { "name": "Voltage" },
@@ -41,7 +51,8 @@
       "ocpp_cloud": { "name": "OCPP cloud" }
     },
     "number": {
-      "current_limit_set": { "name": "Current limit" }
+      "current_limit_set": { "name": "Current limit" },
+      "cost_per_kwh": { "name": "Cost per kWh" }
     }
   }
 }

@@ -21,7 +21,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import GrizzleConfigEntry
-from .const import CHARGER_ERRORS, CHARGER_STATES, PILOT_STATES
+from .const import CHARGER_ERRORS, CHARGER_STATES, CONF_COST_PER_KWH, DEFAULT_COST_PER_KWH, PILOT_STATES
 from .coordinator import GrizzleCoordinator
 from .entity import GrizzleEntity
 
@@ -95,12 +95,6 @@ SENSOR_DESCRIPTIONS: tuple[SensorEntityDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
     ),
     SensorEntityDescription(
-        key="sessionMoney",
-        translation_key="session_cost",
-        icon="mdi:currency-usd",
-        state_class=SensorStateClass.MEASUREMENT,
-    ),
-    SensorEntityDescription(
         key="RSSI",
         translation_key="wifi_signal",
         device_class=SensorDeviceClass.SIGNAL_STRENGTH,
@@ -130,6 +124,7 @@ async def async_setup_entry(
 
     entities.append(GrizzleOcppConnectedSensor(coordinator))
     entities.append(GrizzleOcppVendorSensor(coordinator))
+    entities.append(GrizzleSessionCostSensor(coordinator, entry))
 
     async_add_entities(entities)
 
@@ -251,3 +246,26 @@ class GrizzleOcppVendorSensor(GrizzleEntity, SensorEntity):
         if val is not None:
             return OCPP_VENDORS.get(val, f"Unknown ({val})")
         return None
+
+
+class GrizzleSessionCostSensor(GrizzleEntity, SensorEntity):
+    """Calculated session cost based on energy and configured rate."""
+
+    _attr_translation_key = "session_cost"
+    _attr_icon = "mdi:currency-usd"
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = "$"
+    _attr_suggested_display_precision = 2
+
+    def __init__(self, coordinator: GrizzleCoordinator, entry: GrizzleConfigEntry) -> None:
+        super().__init__(coordinator)
+        self._entry = entry
+        self._attr_unique_id = f"{self._serial}_session_cost"
+
+    @property
+    def native_value(self) -> float | None:
+        energy = self.coordinator.data.get("sessionEnergy")
+        if energy is None:
+            return None
+        rate = self._entry.options.get(CONF_COST_PER_KWH, DEFAULT_COST_PER_KWH)
+        return round(energy * rate, 2)
