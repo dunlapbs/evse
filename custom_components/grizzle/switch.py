@@ -44,17 +44,17 @@ class GrizzleChargingSwitch(GrizzleEntity, SwitchEntity):
     def is_on(self) -> bool | None:
         val = self.coordinator.data.get("evseEnabled")
         if val is not None:
-            return val == 1
+            return val == 0  # 0 = charging allowed, 1 = stop charging
         return None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Enable charging."""
-        await self.coordinator.api.send_command("evseEnabled", 1)
+        await self.coordinator.api.send_command("evseEnabled", 0)
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Disable charging."""
-        await self.coordinator.api.send_command("evseEnabled", 0)
+        await self.coordinator.api.send_command("evseEnabled", 1)
         await self.coordinator.async_request_refresh()
 
 
