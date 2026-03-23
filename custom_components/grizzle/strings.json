@@ -32,7 +32,9 @@
       "wifi_signal": { "name": "Wi-Fi signal" },
       "charger_state": { "name": "Charger state" },
       "charger_error": { "name": "Error" },
-      "pilot_state": { "name": "Plug state" }
+      "pilot_state": { "name": "Plug state" },
+      "ocpp_connected": { "name": "OCPP status" },
+      "ocpp_vendor": { "name": "OCPP vendor" }
     },
     "switch": {
       "charging_enabled": { "name": "Charging" },

@@ -128,7 +128,21 @@ async def async_setup_entry(
     entities.append(GrizzleErrorSensor(coordinator))
     entities.append(GrizzlePilotSensor(coordinator))
 
+    entities.append(GrizzleOcppConnectedSensor(coordinator))
+    entities.append(GrizzleOcppVendorSensor(coordinator))
+
     async_add_entities(entities)
+
+
+OCPP_VENDORS = {
+    0: "Disabled",
+    1: "United Chargers",
+    2: "Unknown (2)",
+    3: "Unknown (3)",
+    4: "Unknown (4)",
+    5: "Unknown (5)",
+    255: "Custom",
+}
 
 
 class GrizzleSensor(GrizzleEntity, SensorEntity):
@@ -200,4 +214,40 @@ class GrizzlePilotSensor(GrizzleEntity, SensorEntity):
         pilot = self.coordinator.data.get("pilot")
         if pilot is not None:
             return PILOT_STATES.get(pilot, f"Unknown ({pilot})")
+        return None
+
+
+class GrizzleOcppConnectedSensor(GrizzleEntity, SensorEntity):
+    """OCPP cloud connection status sensor."""
+
+    _attr_translation_key = "ocpp_connected"
+    _attr_icon = "mdi:cloud-check-outline"
+
+    def __init__(self, coordinator: GrizzleCoordinator) -> None:
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{self._serial}_ocpp_connected"
+
+    @property
+    def native_value(self) -> str | None:
+        val = self.coordinator.data.get("ocppconnected")
+        if val is not None:
+            return "Connected" if val == 1 else "Disconnected"
+        return None
+
+
+class GrizzleOcppVendorSensor(GrizzleEntity, SensorEntity):
+    """OCPP vendor sensor."""
+
+    _attr_translation_key = "ocpp_vendor"
+    _attr_icon = "mdi:cloud-cog-outline"
+
+    def __init__(self, coordinator: GrizzleCoordinator) -> None:
+        super().__init__(coordinator)
+        self._attr_unique_id = f"{self._serial}_ocpp_vendor"
+
+    @property
+    def native_value(self) -> str | None:
+        val = self.coordinator.data.get("ocppVendor")
+        if val is not None:
+            return OCPP_VENDORS.get(val, f"Unknown ({val})")
         return None
