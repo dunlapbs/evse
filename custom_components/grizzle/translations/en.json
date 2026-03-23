@@ -35,7 +35,8 @@
       "pilot_state": { "name": "Plug state" }
     },
     "switch": {
-      "charging_enabled": { "name": "Charging" }
+      "charging_enabled": { "name": "Charging" },
+      "ocpp_cloud": { "name": "OCPP cloud" }
     },
     "number": {
       "current_limit_set": { "name": "Current limit" }

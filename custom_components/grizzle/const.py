@@ -9,6 +9,7 @@ CONF_HOST = "host"
 ENDPOINT_INIT = "/init"
 ENDPOINT_MAIN = "/main"
 ENDPOINT_PAGE_EVENT = "/pageEvent"
+ENDPOINT_OCPP_EVENT = "/ocppEvent"
 
 # Charger states
 CHARGER_STATES = {

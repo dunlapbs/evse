@@ -8,7 +8,7 @@ from typing import Any
 
 import aiohttp
 
-from .const import ENDPOINT_INIT, ENDPOINT_MAIN, ENDPOINT_PAGE_EVENT
+from .const import ENDPOINT_INIT, ENDPOINT_MAIN, ENDPOINT_OCPP_EVENT, ENDPOINT_PAGE_EVENT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -78,6 +78,28 @@ class GrizzleApi:
         except aiohttp.ClientError as err:
             raise GrizzleConnectionError(
                 f"Error sending command to charger at {self._host}: {err}"
+            ) from err
+
+    async def send_ocpp_command(self, name: str, value: Any = "") -> None:
+        """Send a command to the charger via /ocppEvent."""
+        url = f"{self._base_url}{ENDPOINT_OCPP_EVENT}"
+        headers = {
+            "Content-type": "application/x-www-form-urlencoded",
+            "pageEvent": name,
+        }
+        data = f"{name}={value}"
+        try:
+            async with self._session.post(
+                url, data=data, headers=headers, timeout=TIMEOUT
+            ) as resp:
+                resp.raise_for_status()
+        except asyncio.TimeoutError as err:
+            raise GrizzleConnectionError(
+                f"Timeout sending OCPP command to charger at {self._host}"
+            ) from err
+        except aiohttp.ClientError as err:
+            raise GrizzleConnectionError(
+                f"Error sending OCPP command to charger at {self._host}: {err}"
             ) from err
 
     async def async_validate_connection(self) -> dict[str, Any]:
