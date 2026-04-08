@@ -5,8 +5,6 @@ Home Assistant custom integration for the Grizzl-E Ultimate EV charger via its l
 
 ## Charger Details
 - **Model:** GRU 48A 2024
-- **Serial:** GRU-L0000361456
-- **IP:** 192.168.20.52 (Dunlap WiFi, 2.4GHz)
 - **Hardware:** ESP32 (Espressif), hostname UC_EVSE
 - **Firmware:** GRU077L-01.07.5 / ULGRW000A-03.15.2
 - **Charging protocol:** J1772 (no vehicle SOC data available)
